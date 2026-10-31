@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bİ DOYSAM SİPARİŞ – Profesyonel Sipariş Yönetimi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandGold: '#d4af37',
+            brandGoldHover: '#b89628',
+            brandDark: '#0d0d0d',
+            brandCard: '#1a1a1a',
+            brandBorder: '#2a2a2a'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 80mm Termal Fiş Özel Yazdırma Stilleri */
+    @media print {
+      @page {
+        size: 80mm auto;
+        margin: 0;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-family: 'Courier New', Courier, monospace;
+      }
+      body * {
+        visibility: hidden;
+      }
+      #receipt-print-area, #receipt-print-area * {
+        visibility: visible;
+      }
+      #receipt-print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 78mm;
+        padding: 3mm;
+        font-size: 11px;
+        line-height: 1.2;
+      }
+      .print-divider {
+        border-top: 1px dashed #000;
+        margin: 4px 0;
+      }
+      .print-title {
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+      }
+      .print-center {
+        text-align: center;
+      }
+      .print-flex {
+        display: flex;
+        justify-content: space-between;
+      }
+      .print-bold {
+        font-weight: bold;
+      }
+    }
+  </style>
+</head>
+<body class="bg-brandDark text-gray-100 min-h-screen flex flex-col font-sans">
+
+  <!-- Üst Bar (Header) -->
+  <header class="bg-brandCard border-b border-brandBorder px-6 py-4 flex flex-wrap justify-between items-center shadow-lg">
+    <div class="flex items-center space-x-3">
+      <div class="bg-brandGold text-black p-2 rounded-lg font-bold text-xl flex items-center justify-center w-10 h-10">
+        BD
+      </div>
+      <div>
+        <h1 class="text-xl font-bold tracking-wide text-brandGold">Bİ DOYSAM SİPARİŞ</h1>
+        <p class="text-xs text-gray-400">Kumru House & Fast Food Sipariş Takip Paneli</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center space-x-4 mt-2 sm:mt-0">
+      <button onclick="openNewOrderModal()" class="bg-brandGold hover:bg-brandGoldHover text-black font-bold px-5 py-2.5 rounded-lg shadow-md transition flex items-center space-x-2">
+        <i class="fa-solid fa-plus text-lg"></i>
+        <span>YENİ SİPARİŞ</span>
+      </button>
+      <button onclick="switchTab('orders')" id="tab-orders-btn" class="px-4 py-2 rounded-lg bg-gray-800 text-brandGold font-semibold border border-brandBorder">
+        <i class="fa-solid fa-receipt mr-2"></i>Siparişler
+      </button>
+      <button onclick="switchTab('menu')" id="tab-menu-btn" class="px-4 py-2 rounded-lg bg-gray-800 text-gray-300 font-semibold border border-brandBorder hover:text-brandGold">
+        <i class="fa-solid fa-utensils mr-2"></i>Menü
+      </button>
+      <button onclick="switchTab('reports')" id="tab-reports-btn" class="px-4 py-2 rounded-lg bg-gray-800 text-gray-300 font-semibold border border-brandBorder hover:text-brandGold">
+        <i class="fa-solid fa-chart-line mr-2"></i>Raporlar
+      </button>
+    </div>
+  </header>
+
+  <!-- Ana İçerik Alanı -->
+  <main class="flex-1 p-6 max-w-7xl w-full mx-auto">
+    
+    <!-- SİPARİŞLER SEKMESİ -->
+    <div id="tab-orders" class="space-y-6">
+      
+      <!-- Özet Göstergeleri (İstatistikler) -->
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+        <div class="bg-brandCard p-3 rounded-lg border border-brandBorder text-center">
+          <p class="text-xs text-gray-400">Bugünkü Sipariş</p>
+          <p id="stat-count" class="text-xl font-bold text-white mt-1">0</p>
+        </div>
+        <div class="bg-brandCard p-3 rounded-lg border border-brandBorder text-center">
+          <p class="text-xs text-gray-400">Toplam Ciro</p>
+          <p id="stat-revenue" class="text-xl font-bold text-brandGold mt-1">0 ₺</p>
+        </div>
+        <div class="bg-brandCard p-3 rounded-lg border border-brandBorder text-center">
+          <p class="text-xs text-gray-400">Nakit</p>
+          <p id="stat-cash" class="text-xl font-bold text-green-400 mt-1">0 ₺</p>
+        </div>
+        <div class="bg-brandCard p-3 rounded-lg border border-brandBorder text-center">
+          <p class="text-xs text-gray-400">Kart</p>
+          <p id="stat-card" class="text-xl font-bold text-blue-400 mt-1">0 ₺</p>
+        </div>
+        <div class="bg-brandCard p-3 rounded-lg border border-brandBorder text-center">
+          <p class="text-xs text-gray-400">Bekleyen Ödeme</p>
+          <p id="stat-pending" class="text-xl font-bold text-red-400 mt-1">0 ₺</p>
+        </div>
+        <div class="bg-brandCard p-3 rounded-lg border border-brandBorder text-center">
+          <p class="text-xs text-gray-400">Hazırlanan</p>
+          <p id="stat-preparing" class="text-xl font-bold text-yellow-400 mt-1">0</p>
+        </div>
+        <div class="bg-brandCard p-3 rounded-lg border border-brandBorder text-center">
+          <p class="text-xs text-gray-400">Yoldaki</p>
+          <p id="stat-courier" class="text-xl font-bold text-purple-400 mt-1">0</p>
+        </div>
+        <div class="bg-brandCard p-3 rounded-lg border border-brandBorder text-center">
+          <p class="text-xs text-gray-400">Teslim Edilen</p>
+          <p id="stat-delivered" class="text-xl font-bold text-emerald-400 mt-1">0</p>
+        </div>
+      </div>
+
+      <!-- Filtreleme ve Arama -->
+      <div class="flex flex-wrap gap-2 items-center justify-between bg-brandCard p-3 rounded-lg border border-brandBorder">
+        <div class="flex flex-wrap gap-2" id="status-filters">
+          <button onclick="filterStatus('ALL')" class="filter-btn active bg-brandGold text-black font-bold px-3 py-1.5 rounded text-xs">HEPSİ</button>
+          <button onclick="filterStatus('Yeni')" class="filter-btn bg-gray-800 text-blue-400 border border-blue-500/30 font-bold px-3 py-1.5 rounded text-xs">YENİ</button>
+          <button onclick="filterStatus('Hazırlanıyor')" class="filter-btn bg-gray-800 text-yellow-400 border border-yellow-500/30 font-bold px-3 py-1.5 rounded text-xs">HAZIRLANIYOR</button>
+          <button onclick="filterStatus('Hazır')" class="filter-btn bg-gray-800 text-orange-400 border border-orange-500/30 font-bold px-3 py-1.5 rounded text-xs">HAZIR</button>
+          <button onclick="filterStatus('Kurye Yolda')" class="filter-btn bg-gray-800 text-purple-400 border border-purple-500/30 font-bold px-3 py-1.5 rounded text-xs">KURYE YOLDA</button>
+          <button onclick="filterStatus('Teslim Edildi')" class="filter-btn bg-gray-800 text-green-400 border border-green-500/30 font-bold px-3 py-1.5 rounded text-xs">TESLİM EDİLDİ</button>
+          <button onclick="filterStatus('İptal')" class="filter-btn bg-gray-800 text-red-400 border border-red-500/30 font-bold px-3 py-1.5 rounded text-xs">İPTAL</button>
+        </div>
+        <input type="text" id="search-input" onkeyup="renderOrders()" placeholder="Telefon veya isim
